@@ -1,0 +1,41 @@
+ # ./docker-compose.yml
+
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: db2
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: db
+      MYSQL_USER: gordon
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: php_adm
+    links: 
+        - db
+    environment: 
+        - PMA_HOST=db
+        - PMA_PORT=3306
+        - PMA_ARBITRARY=1
+    restart: always    
+    ports:
+        - 8150:80
+  
+  web:
+    image: phpcrud
+    
+    container_name: php_crud
+    depends_on:
+      - db
+    volumes:
+      - ./php/:/var/www/html/
+    ports:
+      - "8200:80"
+    stdin_open: true
+    tty: true
